@@ -11,10 +11,10 @@ from datetime import datetime
 from gitPLoS.search.query import articleUrl, articleXML
 
 # These fields are required for the corpus
-QUERY_RTN_FLDS = ['id','journal','publication_date',
-                  'article_type','author','subject',
-                  'title','abstract','body',
-                 ]
+QUERY_RTN_FLDS = ['id', 'journal', 'publication_date',
+                  'article_type', 'author', 'subject',
+                  'title', 'abstract', 'body']
+
 
 class Builder(object):
     """
@@ -63,73 +63,77 @@ class Builder(object):
         """
         root = self._root
         info = self._corpus_info
-        d2cmap = {}; c2dmap = {}; d2infomap = {}
+        d2cmap = {}
+        c2dmap = {}
+        d2infomap = {}
         amap = info['article_link']
         xmap = info['xml_link']
         # Build all the lists and mappings
         for doc in docs:
             doi = doc['id']
             # If the doc has not subject, add []
-            if 'subject' not in doc: 
+            if 'subject' not in doc:
                 doc['subject'] = []
-            
             # File id -> [ c1, c2, .... ]
             d2cmap[doi] = subjs = doc['subject']
             # Category -> [ f1, f2, .... ]
             for s in subjs:
-               if s in c2dmap:
-                  c2dmap[s].append(doi)
-               else:
-                  c2dmap[s] = [ doi ]
+                if s in c2dmap:
+                    c2dmap[s].append(doi)
+                else:
+                    c2dmap[s] = [doi]
             # doi -> article link
             amap[doi] = articleUrl(doi)
             # doi -> artilce xml link
             xmap[doi] = articleXML(doi)
-	    # Depending on the article type some of these might not exist.
-	    jrnl = doc['journal'] if 'journal' in doc else ''
-	    pub_date = doc['publication_date'] if 'publication_date' in doc else ''
-	    atype = doc['article_type'] if 'article_type' in doc else ''
-	    title = doc['title'] if 'title' in doc else ''
-	    author = doc['author'] if 'author' in doc else []
+            # Depending on the article type some of these might not exist.
+            jrnl = doc['journal'] if 'journal' in doc else ''
+            if 'publication_date' in doc:
+                pub_date = doc['publication_date']
+            else:
+                pub_date = ''
+            atype = doc['article_type'] if 'article_type' in doc else ''
+            title = doc['title'] if 'title' in doc else ''
+            author = doc['author'] if 'author' in doc else []
 
-            d2infomap[doi] =  (jrnl, pub_date, atype, title, author)
-       
-        fnames = [ doi2fn(doi, 'body') for doi in d2cmap.keys() ]
+            d2infomap[doi] = (jrnl, pub_date, atype, title, author)
+
+        fnames = [doi2fn(doi, 'body') for doi in d2cmap.keys()]
         fnames_docs = zip(fnames, docs)
-        
+
         # Dump doc_part 'body' into individual files.
-        for fn,doc in fnames_docs:
-            fd = codecs.open( '%s/%s' % (root,fn), 'w', encoding='utf-8')
-	    fd.write(doc['body'])
+        for fn, doc in fnames_docs:
+            fd = codecs.open('%s/%s' % (root, fn), 'w', encoding='utf-8')
+            fd.write(doc['body'])
             fd.close()
 
-        fnames = [ doi2fn(doi, 'abstract') for doi in d2cmap.keys() ]
+        fnames = [doi2fn(doi, 'abstract') for doi in d2cmap.keys()]
         fnames_docs = zip(fnames, docs)
-        
+
         # Dump doc_part 'abstract' into individual files.
-        for fn,doc in fnames_docs:
-            fd = codecs.open( '%s/%s' % (root,fn), 'w', encoding='utf-8')
-	    fd.write(doc['abstract'][0])
+        for fn, doc in fnames_docs:
+            fd = codecs.open('%s/%s' % (root, fn), 'w', encoding='utf-8')
+            fd.write(doc['abstract'][0])
             fd.close()
 
-        # Update the corpus info 
+        # Update the corpus info
         info['d2c'].update(d2cmap)
 
         c2d = info['c2d']
-        for k,v in c2dmap.iteritems():
+        for k, v in c2dmap.iteritems():
             if k not in c2d:
                 c2d[k] = []
             c2d[k].extend(v)
 
-	info['d2info'].update(d2infomap)
+        info['d2info'].update(d2infomap)
         return
- 
+
     def finalize(self):
         """
         Save the corpus info file.
         """
         # Dump the info file.
-        fd = open( '%s/corpus_info.json' % (self._root), 'w' )
-        json.dump( self._corpus_info, fd, indent=5 )
+        fd = open('%s/corpus_info.json' % (self._root), 'w')
+        json.dump(self._corpus_info, fd, indent=5)
         fd.close()
         return
