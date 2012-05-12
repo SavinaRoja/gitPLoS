@@ -1,7 +1,10 @@
 '''
 '''
 from __future__ import division
-import os, re, nltk, json
+import os
+#import re
+#import nltk
+import json
 import codecs
 from util import doi2fn
 from datetime import datetime
@@ -28,9 +31,9 @@ class Builder(object):
         info['xml_link'] = {}
         info['c2d'] = {}
         info['d2c'] = {}
-	info['d2info'] = {}
+        info['d2info'] = {}
 
-        os.mkdir( root )
+        os.mkdir(root)
         return
 
     def build(self, docs):
