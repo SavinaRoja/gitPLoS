@@ -28,24 +28,25 @@ usage = "usage: %prog [optionS] query1 query2 ..."
 parser = OptionParser(usage=usage)
 
 parser.add_option('-j', '--journal',
-                 action='store', dest='jrnl', default=None,
-                 help='''Default journal is "all". One of more journals can be
-specified using a comma separated identifier list. [pone,pbio,pmed,pgen,pcbi,
-pntd,ppat].''')
+                  action='store', dest='jrnl', default=None,
+                  help='''Default journal is "all". One of more journals can be
+                  specified using a comma separated identifier list. [pone,
+                  pbio,pmed,pgen,pcbi,pntd,ppat].''')
 parser.add_option('-l', '--limit',
-                 action='store', dest='limit', type='int', default=99,
-                 help='Maximum number of documents to return. default=99')
+                  action='store', dest='limit', type='int', default=99,
+                  help='Maximum number of documents to return. default=99')
 parser.add_option("-v", "--verbose",
-                 action='store_true', dest='verbose', default=False,
-                 help='Verbose mode for debugging.')
+                  action='store_true', dest='verbose', default=False,
+                  help='Verbose mode for debugging.')
 parser.add_option('-a', '--api-key',
-                 action='store', dest='api_key', default='7Jne3TIPu6DqFCK',
-                 help='API key obtained from PLoS.')
+                  action='store', dest='api_key', default='7Jne3TIPu6DqFCK',
+                  help='API key obtained from PLoS.')
 parser.add_option('-f', '--fields',
-                 action='store', type='string', dest='fields',
-                 default='id,title,author', help='''Fields to return in query.
-Fields are comma separated with no spaces. default=id,title,author\n
-[id,journal,title,body,author,abstract,subject]''')
+                  action='store', type='string', dest='fields',
+                  default='id,title,author', help='''Fields to return in query.
+                  Fields are comma separated with no spaces. default=id,title,
+                  author\n
+                  [id,journal,title,body,author,abstract,subject]''')
 
 (opts, args) = parser.parse_args()
 
