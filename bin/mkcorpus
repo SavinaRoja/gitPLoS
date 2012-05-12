@@ -1,63 +1,64 @@
 #! /usr/bin/env python
 #
-# Author: Bill OConnor 
+# Author: Bill OConnor
 # Copyright 2011-2012 Bill OConnor and openAccess project.
-# License: See LICENSE.txt 
+# License: See LICENSE.txt
 #
 
 """
-   Description: 
+   Description:
    ============
-   
+
    Command line tools for PLoS search API
 
-   The Public Library of Science (PLoS) publishes peer 
-   reviewed research under the Creative Commons license. 
-   All articles are available to the public free of charge. 
-   Info regarding the RESTful web API to the PLoS Solr based 
-   search engine is available at http://api.plos.org. 
-   
-   This is a collection of python modules and commandline 
-   tools to aid in using this api. 
+   The Public Library of Science (PLoS) publishes peer
+   reviewed research under the Creative Commons license.
+   All articles are available to the public free of charge.
+   Info regarding the RESTful web API to the PLoS Solr based
+   search engine is available at http://api.plos.org.
+
+   This is a collection of python modules and commandline
+   tools to aid in using this api.
 
 """
 # Commandline parser gitPLoS.search.query
-
-from optparse import OptionParser 
+from optparse import OptionParser
 from gitPLoS.search.query import Query, mkJrnlQuery
-from gitPLoS.nltk.corpus.builder import Builder, QUERY_RTN_FLDS 
+from gitPLoS.nltk.corpus.builder import Builder, QUERY_RTN_FLDS
 
 usage = "usage: %prog [optionS] query1 query2 ..."
 parser = OptionParser(usage=usage)
 
-parser.add_option('-n', '--name', action='store', dest='name', default='myCorpus',
-		 help='Name of corpus. Default is "myCorpus". Creates a directory ' +
-		 'and puts all files related to the corpus there.')
-parser.add_option('-j', '--journal', 
-                 action='store', dest='jrnl', default=None,
-                 help='Default journal is "all". One of more journals can be specified ' + \
-                 'comma separated identifier list. [pone,pbio,pmed,pgen,pcbi,pntd,ppat].' )
-parser.add_option('-l', '--limit', 
-                 action='store', dest='limit', type='int', default=99,
-                 help='Maximum number of documents to return. default=99' )
-parser.add_option("-v", "--verbose", 
-                 action='store_true', dest='verbose', default=False,
-                 help='Verbose mode for debugging.' ) 
+parser.add_option('-n', '--name', action='store', dest='name',
+                  default='myCorpus', help='''Name of corpus. Default is
+                  "myCorpus". Creates a directory and puts all files related
+                  to the corpus there.''')
+parser.add_option('-j', '--journal',
+                  action='store', dest='jrnl', default=None,
+                  help='''Default journal is "all". One of more journals can be
+                  specified using a comma separated identifier list. [pone,
+                  pbio,pmed,pgen,pcbi,pntd,ppat].''')
+parser.add_option('-l', '--limit',
+                  action='store', dest='limit', type='int', default=99,
+                  help='Maximum number of documents to return. default=99')
+parser.add_option("-v", "--verbose",
+                  action='store_true', dest='verbose', default=False,
+                  help='Verbose mode for debugging.')
 parser.add_option('-a', '--api-key',
-                 action='store', dest='api_key', default='7Jne3TIPu6DqFCK',
-                 help='API key obtained from PLoS.' ) 
+                  action='store', dest='api_key', default='7Jne3TIPu6DqFCK',
+                  help='API key obtained from PLoS.')
 (opts, args) = parser.parse_args()
-	
+
 # Parse the journal options and add them to the query
-# Journal name are logically OR'd 
+# Journal name are logically OR'd
 if opts.jrnl is not None:
     args.append(mkJrnlQuery(opts.jrnl.split(',')))
-    
+
 # if no argument specified, wildcard search '*:*'
 if len(args) == 0:
-   args = args + ['*:*']
+    args = args + ['*:*']
 # Do this first in the event making the directory fails
-b = Builder( args, opts.name )
+b = Builder(args, opts.name)
 
 """
 Setup and execute the query
@@ -66,8 +67,8 @@ The builder iterates over the query results twice. This currently
 breaks the iterator of the query object. The work around is to
 iterate through all the results and add them as individual items
 to the builder.
-""" 
-plos_q = Query( api_key=opts.api_key, limit=opts.limit )
+"""
+plos_q = Query(api_key=opts.api_key, limit=opts.limit)
 plos_q.query(args, ','.join(QUERY_RTN_FLDS))
 
 if opts.verbose:
@@ -79,4 +80,3 @@ for d in plos_q:
     b.add([d])
 # Finish the corpus build by writing out the corpus_info.json
 b.finalize()
-
