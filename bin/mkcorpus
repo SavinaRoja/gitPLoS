@@ -31,13 +31,13 @@ parser = OptionParser(usage=usage)
 
 parser.add_option('-n', '--name', action='store', dest='name',
                   default='myCorpus', help='''Name of corpus. Default is
-                  "myCorpus". Creates a directory and puts all files related
-                  to the corpus there.''')
+"myCorpus". Creates a directory and puts all files related to the corpus
+there.''')
 parser.add_option('-j', '--journal',
                   action='store', dest='jrnl', default=None,
                   help='''Default journal is "all". One of more journals can be
-                  specified using a comma separated identifier list. [pone,
-                  pbio,pmed,pgen,pcbi,pntd,ppat].''')
+specified using a comma separated identifier list.\n
+[pone, pbio,pmed,pgen,pcbi,pntd,ppat].''')
 parser.add_option('-l', '--limit',
                   action='store', dest='limit', type='int', default=99,
                   help='Maximum number of documents to return. default=99')
